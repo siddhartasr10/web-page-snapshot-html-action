@@ -87,10 +87,16 @@ async function run() {
       // const filename = `snapshot-${timestamp}.png`;
       const htmlFilename = `${pageTitle}-${timestamp}.html`;
       const htmlPath = path.join(sourceDir, htmlFilename); // this was snapshotPath 
-      const html = await page.content();
+      let html = await page.content();
+
 
       const cssFilename = 'style.css';
       const cssPath = path.join(sourceDir, cssFilename);
+
+      // We link all the css we get to the filename we gave the css.
+      let htmlDOM = new DOMParser().parseFromString(html, "text/html");
+      htmlDOM.head.append(`<link rel="stylesheet" href="${cssFilename}">`);
+      html = htmlDOM.documentElement.outerHTML;
       // await page.screenshot({ path: snapshotPath, fullPage: true });
       fs.writeFileSync(htmlPath, html);
       fs.writeFileSync(cssPath, css);
