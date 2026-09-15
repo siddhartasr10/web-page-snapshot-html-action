@@ -2,6 +2,7 @@ import * as core from '@actions/core';
 import * as puppeteer from 'puppeteer-core';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as jsdom from 'jsdom';
 
 async function waitForPageStable(page: puppeteer.Page, timeout: number = 30000): Promise<void> {
   const startTime = Date.now();
@@ -94,9 +95,12 @@ async function run() {
       const cssPath = path.join(sourceDir, cssFilename);
 
       // We link all the css we get to the filename we gave the css.
-      let htmlDOM = new DOMParser().parseFromString(html, "text/html");
-      htmlDOM.head.append(`<link rel="stylesheet" href="${cssFilename}">`);
-      html = htmlDOM.documentElement.outerHTML;
+      let htmlDOM = new jsdom.JSDOM(html);
+      htmlDOM.window.document.head.append(`<link rel="stylesheet" href="${cssFilename}">`);
+      html = htmlDOM.window.document.documentElement.outerHTML;
+      // let htmlDOM = new DOMParser().parseFromString(html, "text/html");
+      // htmlDOM.head.append(`<link rel="stylesheet" href="${cssFilename}">`);
+      // html = htmlDOM.documentElement.outerHTML;
       // await page.screenshot({ path: snapshotPath, fullPage: true });
       fs.writeFileSync(htmlPath, html);
       fs.writeFileSync(cssPath, css);

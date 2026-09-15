@@ -23,6 +23,8 @@
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^9.0.0",
+    "@types/jsdom": "^30.0.0",
+    "jsdom": "^30.0.1",
     "puppeteer-core": "^25.11.0"
   },
   "devDependencies": {
